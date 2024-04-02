@@ -32,13 +32,14 @@ import transformers
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from accelerate.utils import ProjectConfiguration, set_seed
-from datasets import load_dataset
+from datasets import load_dataset, Dataset
 from huggingface_hub import create_repo, upload_folder
 from packaging import version
 from PIL import Image
 from torchvision import transforms
 from tqdm.auto import tqdm
 from transformers import AutoTokenizer, PretrainedConfig
+import pickle
 
 import diffusers
 from diffusers import (
@@ -616,12 +617,15 @@ def make_train_dataset(args, tokenizer, accelerator):
             args.dataset_config_name,
             cache_dir=args.cache_dir,
         )
+    elif args.dataset_pickle is not None:
+        with open(args.dataset_pickle, 'rb') as fin:
+            data_dict = pickle.load(fin)
+        dataset = Dataset.from_dict(data_dict)
     else:
-        if args.train_data_dir is not None:
-            dataset = load_dataset(
-                args.train_data_dir,
-                cache_dir=args.cache_dir,
-            )
+        dataset = load_dataset(
+            args.train_data_dir,
+            cache_dir=args.cache_dir,
+        )
         # See more about loading custom images at
         # https://huggingface.co/docs/datasets/v2.0.0/en/dataset_script
 
