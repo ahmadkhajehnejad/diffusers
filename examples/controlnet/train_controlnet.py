@@ -470,6 +470,14 @@ def parse_args(input_args=None):
         ),
     )
     parser.add_argument(
+        "--dataset_pickle",
+        type=str,
+        default=None,
+        help=(
+            "The path of the pickle Dataset to train on"
+        ),
+    )
+    parser.add_argument(
         "--dataset_config_name",
         type=str,
         default=None,
